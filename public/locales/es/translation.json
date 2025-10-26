@@ -1,0 +1,7 @@
+{
+  "title": "Título traducido",
+  "description": {
+    "part1": "Primera parte con traducción",
+    "part2": "Segunda parte anidada traducida"
+  }
+}
