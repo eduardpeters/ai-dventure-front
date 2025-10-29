@@ -1,7 +1,8 @@
 {
-  "title": "Título traducido",
-  "description": {
-    "part1": "Primera parte con traducción",
-    "part2": "Segunda parte anidada traducida"
+  "home": {
+    "title": "AIdventure",
+    "subtitle": "¿Cómo funciona?",
+    "description": "Construye tu propia aventura",
+    "btn-new": "Inicia una nueva aventura!"
   }
 }
