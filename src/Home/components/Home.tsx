@@ -7,14 +7,11 @@ export default function Home() {
   return (
     <main className="h-full flex flex-col justify-evenly items-center p-2">
       <h1 className="text-5xl tracking-wider">{t("home.title")}</h1>
-      <section className="flex flex-col self-start">
+      <section className="flex flex-col self-start px-4">
         <h2 className="text-3xl">{t("home.subtitle")}</h2>
         <p className="w-prose">{t("home.description")}</p>
       </section>
-      <Link
-        to="/"
-        className="rounded-lg p-2 text-slate-100 bg-sky-500 hover:bg-sky-600 hover:text-slate-50 dark:bg-sky-700 dark:hover:bg-sky-600 dark:hover:text-slate-200"
-      >
+      <Link to="/" className="rounded-lg p-2">
         {t("home.btn-new")}
       </Link>
     </main>
