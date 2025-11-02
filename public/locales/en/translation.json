@@ -3,6 +3,19 @@
     "title": "AIdventure",
     "subtitle": "How it works",
     "description": "choose your own adventure",
-    "btn-new": "Start new adventure!"
+    "link-new": "Start new adventure!"
+  },
+  "new": {
+    "title": "Prepare a new adventure",
+    "link-home": "Back to start!",
+    "label-setting": "Choose a setting",
+    "option-fantasy": "Fantasy",
+    "option-scifi": "Science Fiction",
+    "option-contemporarythriller": "Contemporary Thriller",
+    "title-summary": "This is your adventure setup:",
+    "summary-fantasy": "You will visit a land of fantasy",
+    "summary-scifi": "You will experience a science fiction adventure",
+    "summary-contemporarythriller": "You will live the tension of a contemporary thriller",
+    "btn-submit": "Begin adventure!"
   }
 }

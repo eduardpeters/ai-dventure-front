@@ -11,8 +11,8 @@ export default function Home() {
         <h2 className="text-3xl">{t("home.subtitle")}</h2>
         <p className="w-prose">{t("home.description")}</p>
       </section>
-      <Link to="/" className="rounded-lg p-2">
-        {t("home.btn-new")}
+      <Link to="/new" className="border rounded-lg p-2 cursor-pointer">
+        {t("home.link-new")}
       </Link>
     </main>
   );
