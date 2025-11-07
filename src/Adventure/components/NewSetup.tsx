@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { adventureTypesQueryOptions } from "../queryOptions/adventureTypes";
 
 const mockOptions = [
   { id: "123", description: "fantasy" },
@@ -9,8 +11,11 @@ const mockOptions = [
 ];
 
 export default function NewSetup() {
+  const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
   const { t } = useTranslation();
   const [description, setDescription] = useState("");
+
+  console.log(adventureTypesQuery, adventureTypesQuery.data);
 
   function updateSelectedDescription(id: string) {
     const selectedType = mockOptions.find((o) => o.id === id);
@@ -42,7 +47,9 @@ export default function NewSetup() {
           required
         >
           {mockOptions.map((o) => (
-            <option value={o.id}>{t(`new.option-${o.description}`)}</option>
+            <option key={o.id} value={o.id}>
+              {t(`new.option-${o.description}`)}
+            </option>
           ))}
         </select>
         <h3 className="text-xl">{t("new.title-summary")}</h3>
