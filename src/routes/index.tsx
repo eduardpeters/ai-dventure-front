@@ -6,9 +6,5 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return (
-    <div className="h-full">
-      <Home />
-    </div>
-  );
+  return <Home />;
 }

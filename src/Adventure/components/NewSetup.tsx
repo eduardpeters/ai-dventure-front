@@ -1,61 +1,76 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { adventureTypesQueryOptions } from "../queryOptions/adventureTypes";
 
-const mockOptions = [
-  { id: "123", description: "fantasy" },
-  { id: "234", description: "scifi" },
-  { id: "345", description: "contemporarythriller" },
-];
-
 export default function NewSetup() {
-  const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
   const { t } = useTranslation();
-  const [description, setDescription] = useState("");
+  const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
+  const [selectedType, setSelectedType] = useState<string | undefined>(
+    adventureTypesQuery.data[0]?.id
+  );
 
-  console.log(adventureTypesQuery, adventureTypesQuery.data);
+  const adventureTypes = adventureTypesQuery.data;
 
-  function updateSelectedDescription(id: string) {
-    const selectedType = mockOptions.find((o) => o.id === id);
-    if (selectedType) {
-      setDescription(selectedType.description);
-    }
-  }
+  const description =
+    adventureTypes.find((type) => type.id === selectedType)?.description ??
+    "missing";
 
-  async function newAdventure(formData: FormData) {
-    const adventureTypeId = formData.get("adventure-type");
-    console.log("Will request a new adventure:", adventureTypeId);
+  async function newAdventure(e: FormEvent) {
+    e.preventDefault();
+
+    console.log("Will request a new adventure:", selectedType);
   }
 
   return (
-    <main className="h-full flex flex-col justify-evenly items-center p-2">
+    <main className="h-full w-full flex flex-col items-center p-2 gap-8">
       <Link
         to="/"
         className="text-sm border rounded-lg p-1 cursor-pointer self-start"
       >
         {t("new.link-home")}
       </Link>
-      <form action={newAdventure} className="flex flex-col gap-2">
-        <h1 className="text-3xl">{t("new.title")}</h1>
-        <label htmlFor="adventure-type">{t("new.label-setting")}</label>
-        <select
-          name="adventure-type"
-          id="adventure-type"
-          onChange={(e) => updateSelectedDescription(e.target.value)}
-          required
+      {adventureTypesQuery.isError ? (
+        <div>
+          <span>This is unfortunate, please come back later!</span>
+        </div>
+      ) : (
+        <form
+          onSubmit={(e) => newAdventure(e)}
+          className="w-full flex-1 flex flex-col gap-8 p-4"
         >
-          {mockOptions.map((o) => (
-            <option key={o.id} value={o.id}>
-              {t(`new.option-${o.description}`)}
-            </option>
-          ))}
-        </select>
-        <h3 className="text-xl">{t("new.title-summary")}</h3>
-        <p>{t(`new.summary-${description}`)}</p>
-        <button type="submit">{t("new.btn-submit")}</button>
-      </form>
+          <h1 className="text-3xl">{t("new.title")}</h1>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="adventure-type">{t("new.label-setting")}</label>
+            <select
+              name="adventure-type"
+              id="adventure-type"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              required
+              className="border rounded-lg p-2"
+            >
+              {adventureTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {t(`new.option-${type.description}`)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-xl">{t("new.title-summary")}</h3>
+            <p>{t(`new.summary-${description}`)}</p>
+          </div>
+          <button
+            type="submit"
+            disabled={!selectedType}
+            className="border rounded-lg p-2 cursor-pointer"
+          >
+            {t("new.btn-submit")}
+          </button>
+        </form>
+      )}
     </main>
   );
 }
