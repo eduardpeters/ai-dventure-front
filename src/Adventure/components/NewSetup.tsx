@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { adventureTypesQueryOptions } from "../queryOptions/adventureTypes";
@@ -7,6 +7,7 @@ import { createAdventureMutationOptions } from "../queryOptions/adventures";
 
 export default function NewSetup() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
   const adventureMutation = useMutation(createAdventureMutationOptions);
   const [selectedType, setSelectedType] = useState<string | undefined>(
@@ -25,8 +26,12 @@ export default function NewSetup() {
 
     console.log("Will request a new adventure:", selectedType);
     try {
-      const newAdventure = await adventureMutation.mutateAsync(selectedType);
-      console.log("Created adventure:", newAdventure);
+      const response = await adventureMutation.mutateAsync(selectedType);
+      console.log("Created adventure:", response);
+      navigate({
+        to: "/adventure/$adventureId",
+        params: { adventureId: response.adventure },
+      });
     } catch (e: unknown) {
       console.log("error:", e);
     }
