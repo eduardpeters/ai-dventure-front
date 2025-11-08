@@ -1,12 +1,14 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { adventureTypesQueryOptions } from "../queryOptions/adventureTypes";
+import { createAdventureMutationOptions } from "../queryOptions/adventures";
 
 export default function NewSetup() {
   const { t } = useTranslation();
   const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
+  const adventureMutation = useMutation(createAdventureMutationOptions);
   const [selectedType, setSelectedType] = useState<string | undefined>(
     adventureTypesQuery.data[0]?.id
   );
@@ -19,8 +21,15 @@ export default function NewSetup() {
 
   async function newAdventure(e: FormEvent) {
     e.preventDefault();
+    if (!selectedType) return;
 
     console.log("Will request a new adventure:", selectedType);
+    try {
+      const newAdventure = await adventureMutation.mutateAsync(selectedType);
+      console.log("Created adventure:", newAdventure);
+    } catch (e: unknown) {
+      console.log("error:", e);
+    }
   }
 
   return (
@@ -64,7 +73,7 @@ export default function NewSetup() {
           </div>
           <button
             type="submit"
-            disabled={!selectedType}
+            disabled={!selectedType || adventureMutation.isPending}
             className="border rounded-lg p-2 cursor-pointer"
           >
             {t("new.btn-submit")}
