@@ -9,38 +9,75 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as NewRouteImport } from './routes/new'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdventureIndexRouteImport } from './routes/adventure.index'
+import { Route as AdventureAdventureIdRouteImport } from './routes/adventure_.$adventureId'
 
+const NewRoute = NewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdventureIndexRoute = AdventureIndexRouteImport.update({
+  id: '/adventure/',
+  path: '/adventure/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdventureAdventureIdRoute = AdventureAdventureIdRouteImport.update({
+  id: '/adventure_/$adventureId',
+  path: '/adventure/$adventureId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/new': typeof NewRoute
+  '/adventure/$adventureId': typeof AdventureAdventureIdRoute
+  '/adventure': typeof AdventureIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/new': typeof NewRoute
+  '/adventure/$adventureId': typeof AdventureAdventureIdRoute
+  '/adventure': typeof AdventureIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/new': typeof NewRoute
+  '/adventure_/$adventureId': typeof AdventureAdventureIdRoute
+  '/adventure/': typeof AdventureIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/new' | '/adventure/$adventureId' | '/adventure'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/new' | '/adventure/$adventureId' | '/adventure'
+  id: '__root__' | '/' | '/new' | '/adventure_/$adventureId' | '/adventure/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NewRoute: typeof NewRoute
+  AdventureAdventureIdRoute: typeof AdventureAdventureIdRoute
+  AdventureIndexRoute: typeof AdventureIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/new': {
+      id: '/new'
+      path: '/new'
+      fullPath: '/new'
+      preLoaderRoute: typeof NewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +85,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/adventure/': {
+      id: '/adventure/'
+      path: '/adventure'
+      fullPath: '/adventure'
+      preLoaderRoute: typeof AdventureIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adventure_/$adventureId': {
+      id: '/adventure_/$adventureId'
+      path: '/adventure/$adventureId'
+      fullPath: '/adventure/$adventureId'
+      preLoaderRoute: typeof AdventureAdventureIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NewRoute: NewRoute,
+  AdventureAdventureIdRoute: AdventureAdventureIdRoute,
+  AdventureIndexRoute: AdventureIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

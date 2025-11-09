@@ -1,7 +1,21 @@
 {
-  "title": "Título traducido",
-  "description": {
-    "part1": "Primera parte con traducción",
-    "part2": "Segunda parte anidada traducida"
+  "home": {
+    "title": "AIdventure",
+    "subtitle": "¿Cómo funciona?",
+    "description": "Construye tu propia aventura",
+    "link-new": "Inicia una nueva aventura!"
+  },
+  "new": {
+    "title": "Prepara la nueva aventura",
+    "link-home": "Vuelta al inicio!",
+    "label-setting": "Elije un tipo de aventura",
+    "option-fantasy": "Fantasía",
+    "option-scifi": "Ciencia Ficción",
+    "option-contemporarythriller": "Thriller Contemporáneo",
+    "title-summary": "Esta es la aventura preparada:",
+    "summary-fantasy": "Visitarás un mundo de fantasía",
+    "summary-scifi": "Experimentarás una aventura de ciencia ficción",
+    "summary-contemporarythriller": "Vivirás la tensión de un thriller contemporáneo",
+    "btn-submit": "Iniciar la aventura!"
   }
 }
