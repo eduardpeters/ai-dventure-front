@@ -24,16 +24,14 @@ export default function NewSetup() {
     e.preventDefault();
     if (!selectedType) return;
 
-    console.log("Will request a new adventure:", selectedType);
     try {
       const response = await adventureMutation.mutateAsync(selectedType);
-      console.log("Created adventure:", response);
       navigate({
         to: "/adventure/$adventureId",
         params: { adventureId: response.adventure },
       });
     } catch (e: unknown) {
-      console.log("error:", e);
+      console.error(e);
     }
   }
 

@@ -28,7 +28,10 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   useEffect(() => {
     async function startAdventure(adventureId: string) {
       const nextChapter = await adventureMutation.mutateAsync({ adventureId });
-      console.log("next chapter:", nextChapter);
+      if (!nextChapter) {
+        console.error("No response received");
+        return;
+      }
       setCurrentChapter(nextChapter.chapterNumber);
       setChapters((prev) => [
         ...prev,
@@ -39,14 +42,9 @@ export default function Gameplay({ adventureId }: GameplayProps) {
       ]);
     }
 
-    console.log(
-      "running effect",
-      adventureMutation.isPending,
-      adventureMutation.isSuccess
-    );
+    // TODO: Remove this effect and send first mutation at adventure creation
     if (!initialized.current) {
       initialized.current = true;
-      console.log("calling async function");
 
       startAdventure(adventureId);
     }
@@ -57,29 +55,36 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   }, []);
 
   async function advanceAdventure(chapterChoiceId: string) {
-    const nextChapter = await adventureMutation.mutateAsync({
-      adventureId,
-      chapterChoiceId,
-    });
-    console.log("next chapter:", nextChapter);
-    setChapters((prev) => [
-      ...prev.map((chapter) =>
-        chapter.chapterNumber === currentChapter
-          ? {
-              ...chapter,
-              choices: chapter.choices.map((c) => ({
-                ...c,
-                chosen: c.id === chapterChoiceId,
-              })),
-            }
-          : chapter
-      ),
-      {
-        ...nextChapter,
-        choices: nextChapter.choices.map((c) => ({ ...c, chosen: false })),
-      },
-    ]);
-    setCurrentChapter(nextChapter.chapterNumber);
+    try {
+      const nextChapter = await adventureMutation.mutateAsync({
+        adventureId,
+        chapterChoiceId,
+      });
+      if (!nextChapter) {
+        console.error("No response received");
+        return;
+      }
+      setChapters((prev) => [
+        ...prev.map((chapter) =>
+          chapter.chapterNumber === currentChapter
+            ? {
+                ...chapter,
+                choices: chapter.choices.map((c) => ({
+                  ...c,
+                  chosen: c.id === chapterChoiceId,
+                })),
+              }
+            : chapter
+        ),
+        {
+          ...nextChapter,
+          choices: nextChapter.choices.map((c) => ({ ...c, chosen: false })),
+        },
+      ]);
+      setCurrentChapter(nextChapter.chapterNumber);
+    } catch (error: unknown) {
+      console.error(error);
+    }
   }
 
   return (
