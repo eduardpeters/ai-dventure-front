@@ -17,5 +17,11 @@
     "summary-scifi": "You will experience a science fiction adventure",
     "summary-contemporarythriller": "You will live the tension of a contemporary thriller",
     "btn-submit": "Begin adventure!"
+  },
+  "adventure": {
+    "title": "Venture forth...",
+    "narrating": "Narrating...",
+    "concluded": "The adventure has concluded.",
+    "link-home": "Back to start!"
   }
 }
