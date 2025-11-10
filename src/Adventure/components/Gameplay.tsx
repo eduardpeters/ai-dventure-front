@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { useMutation } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { advanceAdventureMutationOptions } from "../queryOptions/adventures";
 
 interface GameplayProps {
@@ -18,6 +20,7 @@ interface Chapter {
 }
 
 export default function Gameplay({ adventureId }: GameplayProps) {
+  const { t } = useTranslation();
   const adventureMutation = useMutation(advanceAdventureMutationOptions);
   const [currentChapter, setCurrentChapter] = useState<number>(0);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -99,7 +102,7 @@ export default function Gameplay({ adventureId }: GameplayProps) {
 
   return (
     <main className="h-full w-full flex flex-col items-center p-2 gap-8">
-      <h1>Now venturing in {adventureId}</h1>
+      <h1>{t("adventure.title")}</h1>
       <div ref={chaptersRef}>
         {chapters.map((chapter) => (
           <div key={chapter.chapterNumber}>
@@ -119,8 +122,18 @@ export default function Gameplay({ adventureId }: GameplayProps) {
           </div>
         ))}
       </div>
-      {adventureMutation.isPending && <div>narrating...</div>}
-      {hasEnded && <div>The adventured has concluded</div>}
+      {adventureMutation.isPending && <div>{t("adventure.narrating")}</div>}
+      {hasEnded && (
+        <div className="flex flex-col gap-2">
+          <span>{t("adventure.concluded")}</span>
+          <Link
+            to="/"
+            className="text-sm border rounded-lg p-1 cursor-pointer self-start"
+          >
+            {t("adventure.link-home")}
+          </Link>
+        </div>
+      )}
     </main>
   );
 }
