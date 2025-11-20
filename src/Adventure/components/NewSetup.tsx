@@ -3,13 +3,19 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { adventureTypesQueryOptions } from "../queryOptions/adventureTypes";
-import { createAdventureMutationOptions } from "../queryOptions/adventures";
+import {
+  advanceAdventureMutationOptions,
+  createAdventureMutationOptions,
+} from "../queryOptions/adventures";
 
 export default function NewSetup() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
   const adventureMutation = useMutation(createAdventureMutationOptions);
+  const initializeAdventureMutation = useMutation(
+    advanceAdventureMutationOptions
+  );
   const [selectedType, setSelectedType] = useState<string | undefined>(
     adventureTypesQuery.data[0]?.id
   );
@@ -25,11 +31,27 @@ export default function NewSetup() {
     if (!selectedType) return;
 
     try {
-      const response = await adventureMutation.mutateAsync(selectedType);
-      navigate({
-        to: "/adventure/$adventureId",
-        params: { adventureId: response.adventure },
-      });
+      const newAdventure = await adventureMutation.mutateAsync(selectedType);
+
+      try {
+        const firstChapter = await initializeAdventureMutation.mutateAsync({
+          adventureId: newAdventure.adventure,
+        });
+        if (firstChapter) {
+          // Allows for retrieval upon arriving on the Gameplay page
+          sessionStorage.setItem(
+            newAdventure.adventure,
+            JSON.stringify(firstChapter)
+          );
+        }
+      } catch (e: unknown) {
+        console.error(e);
+      } finally {
+        navigate({
+          to: "/adventure/$adventureId",
+          params: { adventureId: newAdventure.adventure },
+        });
+      }
     } catch (e: unknown) {
       console.error(e);
     }
@@ -76,7 +98,11 @@ export default function NewSetup() {
           </div>
           <button
             type="submit"
-            disabled={!selectedType || adventureMutation.isPending}
+            disabled={
+              !selectedType ||
+              adventureMutation.isPending ||
+              initializeAdventureMutation.isPending
+            }
             className="border rounded-lg p-2 cursor-pointer"
           >
             {t("new.btn-submit")}

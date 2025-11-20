@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { advanceAdventureMutationOptions } from "../queryOptions/adventures";
+import type { ChapterResponse } from "../services/adventures";
 
 interface GameplayProps {
   adventureId: string;
@@ -24,38 +25,37 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   const adventureMutation = useMutation(advanceAdventureMutationOptions);
   const [currentChapter, setCurrentChapter] = useState<number>(0);
   const [chapters, setChapters] = useState<Chapter[]>([]);
-  const initialized = useRef<boolean>(false);
   const chaptersRef = useRef<HTMLDivElement | null>(null);
 
   const hasEnded =
     chapters.length > 0 && chapters[chapters.length - 1].choices.length === 0;
 
   useEffect(() => {
-    async function startAdventure(adventureId: string) {
-      const nextChapter = await adventureMutation.mutateAsync({ adventureId });
-      if (!nextChapter) {
-        console.error("No response received");
+    if (chapters.length === 0) {
+      const stored = sessionStorage.getItem(adventureId);
+      if (!stored) {
+        console.log("Allow for manual start!");
         return;
       }
-      setCurrentChapter(nextChapter.chapterNumber);
-      setChapters((prev) => [
-        ...prev,
-        {
-          ...nextChapter,
-          choices: nextChapter.choices.map((c) => ({ ...c, chosen: false })),
-        },
-      ]);
-    }
-
-    // TODO: Remove this effect and send first mutation at adventure creation
-    if (!initialized.current) {
-      initialized.current = true;
-
-      startAdventure(adventureId);
+      try {
+        const parsedChapter = JSON.parse(stored) as ChapterResponse;
+        setCurrentChapter(parsedChapter.chapterNumber);
+        setChapters([
+          {
+            ...parsedChapter,
+            choices: parsedChapter.choices.map((c) => ({
+              ...c,
+              chosen: false,
+            })),
+          },
+        ]);
+      } catch (e: unknown) {
+        console.error(e);
+      }
     }
 
     return () => {
-      adventureMutation.reset();
+      sessionStorage.removeItem(adventureId);
     };
   }, []);
 
