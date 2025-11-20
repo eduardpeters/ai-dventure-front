@@ -27,6 +27,7 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const chaptersRef = useRef<HTMLDivElement | null>(null);
 
+  const notStarted = chapters.length === 0 && currentChapter === 0;
   const hasEnded =
     chapters.length > 0 && chapters[chapters.length - 1].choices.length === 0;
 
@@ -58,6 +59,32 @@ export default function Gameplay({ adventureId }: GameplayProps) {
       sessionStorage.removeItem(adventureId);
     };
   }, []);
+
+  async function startAdventure() {
+    if (chapters.length !== 0) return;
+
+    try {
+      const firstChapter = await adventureMutation.mutateAsync({
+        adventureId,
+      });
+      if (!firstChapter) {
+        console.error("No response received");
+        return;
+      }
+      setCurrentChapter(firstChapter.chapterNumber);
+      setChapters([
+        {
+          ...firstChapter,
+          choices: firstChapter.choices.map((c) => ({
+            ...c,
+            chosen: false,
+          })),
+        },
+      ]);
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  }
 
   async function advanceAdventure(chapterChoiceId: string) {
     try {
@@ -103,6 +130,17 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   return (
     <main className="h-full w-full flex flex-col items-center p-2 gap-8">
       <h1>{t("adventure.title")}</h1>
+      {notStarted && (
+        <div className="flex flex-col items-center">
+          <p>{t("adventure.start")}</p>
+          <button
+            onClick={startAdventure}
+            className="border rounded-lg p-2 cursor-pointer"
+          >
+            {t("adventure.btn-start")}
+          </button>
+        </div>
+      )}
       <div ref={chaptersRef}>
         {chapters.map((chapter) => (
           <div key={chapter.chapterNumber}>

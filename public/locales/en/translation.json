@@ -20,6 +20,8 @@
   },
   "adventure": {
     "title": "Venture forth...",
+    "start": "There was a problem loading your adventure, please try again.",
+    "btn-start": "Begin adventure!",
     "narrating": "Narrating...",
     "concluded": "The adventure has concluded.",
     "link-home": "Back to start!"
