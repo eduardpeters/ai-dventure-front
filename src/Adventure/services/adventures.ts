@@ -6,7 +6,7 @@ interface NewAdventureResponse {
   adventure: string;
 }
 
-interface ChapterResponse {
+export interface ChapterResponse {
   chapterNumber: number;
   narrative: string;
   choices: {

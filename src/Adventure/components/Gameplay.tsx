@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { advanceAdventureMutationOptions } from "../queryOptions/adventures";
+import type { ChapterResponse } from "../services/adventures";
 
 interface GameplayProps {
   adventureId: string;
@@ -24,40 +25,66 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   const adventureMutation = useMutation(advanceAdventureMutationOptions);
   const [currentChapter, setCurrentChapter] = useState<number>(0);
   const [chapters, setChapters] = useState<Chapter[]>([]);
-  const initialized = useRef<boolean>(false);
   const chaptersRef = useRef<HTMLDivElement | null>(null);
 
+  const notStarted = chapters.length === 0 && currentChapter === 0;
   const hasEnded =
     chapters.length > 0 && chapters[chapters.length - 1].choices.length === 0;
 
   useEffect(() => {
-    async function startAdventure(adventureId: string) {
-      const nextChapter = await adventureMutation.mutateAsync({ adventureId });
-      if (!nextChapter) {
-        console.error("No response received");
+    if (chapters.length === 0) {
+      const stored = sessionStorage.getItem(adventureId);
+      if (!stored) {
+        console.log("Allow for manual start!");
         return;
       }
-      setCurrentChapter(nextChapter.chapterNumber);
-      setChapters((prev) => [
-        ...prev,
-        {
-          ...nextChapter,
-          choices: nextChapter.choices.map((c) => ({ ...c, chosen: false })),
-        },
-      ]);
-    }
-
-    // TODO: Remove this effect and send first mutation at adventure creation
-    if (!initialized.current) {
-      initialized.current = true;
-
-      startAdventure(adventureId);
+      try {
+        const parsedChapter = JSON.parse(stored) as ChapterResponse;
+        setCurrentChapter(parsedChapter.chapterNumber);
+        setChapters([
+          {
+            ...parsedChapter,
+            choices: parsedChapter.choices.map((c) => ({
+              ...c,
+              chosen: false,
+            })),
+          },
+        ]);
+      } catch (e: unknown) {
+        console.error(e);
+      }
     }
 
     return () => {
-      adventureMutation.reset();
+      sessionStorage.removeItem(adventureId);
     };
   }, []);
+
+  async function startAdventure() {
+    if (chapters.length !== 0) return;
+
+    try {
+      const firstChapter = await adventureMutation.mutateAsync({
+        adventureId,
+      });
+      if (!firstChapter) {
+        console.error("No response received");
+        return;
+      }
+      setCurrentChapter(firstChapter.chapterNumber);
+      setChapters([
+        {
+          ...firstChapter,
+          choices: firstChapter.choices.map((c) => ({
+            ...c,
+            chosen: false,
+          })),
+        },
+      ]);
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  }
 
   async function advanceAdventure(chapterChoiceId: string) {
     try {
@@ -103,6 +130,17 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   return (
     <main className="h-full w-full flex flex-col items-center p-2 gap-8">
       <h1>{t("adventure.title")}</h1>
+      {notStarted && (
+        <div className="flex flex-col items-center">
+          <p>{t("adventure.start")}</p>
+          <button
+            onClick={startAdventure}
+            className="border rounded-lg p-2 cursor-pointer"
+          >
+            {t("adventure.btn-start")}
+          </button>
+        </div>
+      )}
       <div ref={chaptersRef}>
         {chapters.map((chapter) => (
           <div key={chapter.chapterNumber}>
