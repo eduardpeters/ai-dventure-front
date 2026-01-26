@@ -39,7 +39,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/new': typeof NewRoute
   '/adventure/$adventureId': typeof AdventureAdventureIdRoute
-  '/adventure': typeof AdventureIndexRoute
+  '/adventure/': typeof AdventureIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -56,7 +56,7 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/new' | '/adventure/$adventureId' | '/adventure'
+  fullPaths: '/' | '/new' | '/adventure/$adventureId' | '/adventure/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/new' | '/adventure/$adventureId' | '/adventure'
   id: '__root__' | '/' | '/new' | '/adventure_/$adventureId' | '/adventure/'
@@ -88,7 +88,7 @@ declare module '@tanstack/react-router' {
     '/adventure/': {
       id: '/adventure/'
       path: '/adventure'
-      fullPath: '/adventure'
+      fullPath: '/adventure/'
       preLoaderRoute: typeof AdventureIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
