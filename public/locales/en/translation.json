@@ -25,6 +25,7 @@
     "start": "There was a problem loading your adventure, please try again.",
     "btn-start": "Begin adventure!",
     "narrating": "Narrating...",
+    "error-chapter": "Fate has not moved forward with your choice, please try again.",
     "concluded": "The adventure has concluded.",
     "link-home": "Back to start!"
   }

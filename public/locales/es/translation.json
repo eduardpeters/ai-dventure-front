@@ -25,6 +25,7 @@
     "start": "Ha ocurrido un problema iniciando tu aventura, inténtalo de nuevo.",
     "btn-start": "Iniciar la aventura!",
     "narrating": "Narrando...",
+    "error-chapter": "El destino ha decidido no seguir adelante con tu decisión, por favor intenta de nuevo.",
     "concluded": "La aventura ha terminado.",
     "link-home": "Vuelta al inicio!"
   }
