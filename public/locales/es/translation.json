@@ -16,13 +16,16 @@
     "summary-fantasy": "Visitarás un mundo de fantasía",
     "summary-scifi": "Experimentarás una aventura de ciencia ficción",
     "summary-contemporarythriller": "Vivirás la tensión de un thriller contemporáneo",
-    "btn-submit": "Iniciar la aventura!"
+    "btn-submit": "Iniciar la aventura!",
+    "error-generic": "Esta situación es desafoturnada, por favor intenta más tarde!",
+    "error-service-unavailable": "Se ha alcanzado el límite de nuevas aventuras, por favor intenta más tarde!"
   },
   "adventure": {
     "title": "Adéntrate en la aventura...",
     "start": "Ha ocurrido un problema iniciando tu aventura, inténtalo de nuevo.",
     "btn-start": "Iniciar la aventura!",
     "narrating": "Narrando...",
+    "error-chapter": "El destino ha decidido no seguir adelante con tu decisión, por favor intenta de nuevo.",
     "concluded": "La aventura ha terminado.",
     "link-home": "Vuelta al inicio!"
   }

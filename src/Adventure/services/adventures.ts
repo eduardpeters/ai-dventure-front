@@ -1,4 +1,5 @@
-import ky, { isHTTPError, type HTTPError } from "ky";
+import ky, { isHTTPError } from "ky";
+import { mapHttpResponseToError } from "@/errors/mapResponseToError";
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/adventures`;
 
@@ -20,14 +21,25 @@ export class AdventureService {
   static counter: number = 1;
 
   static async create(adventureTypeId: string) {
-    const json = await ky
-      .post<NewAdventureResponse>(BASE_URL, { json: { adventureTypeId } })
-      .json();
-    return json;
+    try {
+      const json = await ky
+        .post<NewAdventureResponse>(BASE_URL, { json: { adventureTypeId } })
+        .json();
+      return json;
+    } catch (error: unknown) {
+      if (isHTTPError(error)) {
+        const body = await error.response.text();
+        throw mapHttpResponseToError(error.response.status, body, error);
+      }
+      throw error;
+    }
   }
 
   static async advance(adventureId: string, chapterChoiceId?: string) {
-    /* Use to mock backend responses
+    /*
+    if (chapterChoiceId === "2c379328-5bd4-4dc4-a3aa-4d598f7ad7c6") {
+      throw new Error("unexpected situations arise");
+    }
     const mockResponse: ChapterResponse = {
       chapterNumber: this.counter++,
       narrative:
@@ -66,9 +78,10 @@ export class AdventureService {
       return json;
     } catch (error) {
       if (isHTTPError(error)) {
-        const msg = await (error as HTTPError).response.text();
-        console.log(msg);
+        const body = await error.response.text();
+        throw mapHttpResponseToError(error.response.status, body, error);
       }
+      throw error;
     }
   }
 }

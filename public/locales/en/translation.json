@@ -16,13 +16,16 @@
     "summary-fantasy": "You will visit a land of fantasy",
     "summary-scifi": "You will experience a science fiction adventure",
     "summary-contemporarythriller": "You will live the tension of a contemporary thriller",
-    "btn-submit": "Begin adventure!"
+    "btn-submit": "Begin adventure!",
+    "error-generic": "This is unfortunate, please come back later!",
+    "error-service-unavailable": "New adventure limit has been reached, please come back later!"
   },
   "adventure": {
     "title": "Venture forth...",
     "start": "There was a problem loading your adventure, please try again.",
     "btn-start": "Begin adventure!",
     "narrating": "Narrating...",
+    "error-chapter": "Fate has not moved forward with your choice, please try again.",
     "concluded": "The adventure has concluded.",
     "link-home": "Back to start!"
   }

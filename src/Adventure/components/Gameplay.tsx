@@ -92,10 +92,7 @@ export default function Gameplay({ adventureId }: GameplayProps) {
         adventureId,
         chapterChoiceId,
       });
-      if (!nextChapter) {
-        console.error("No response received");
-        return;
-      }
+
       // Update the DOM Synchronously so that scrolling to the last child occurs with the new node appended
       flushSync(() => {
         setChapters((prev) => [
@@ -108,7 +105,7 @@ export default function Gameplay({ adventureId }: GameplayProps) {
                     chosen: c.id === chapterChoiceId,
                   })),
                 }
-              : chapter
+              : chapter,
           ),
           {
             ...nextChapter,
@@ -117,13 +114,14 @@ export default function Gameplay({ adventureId }: GameplayProps) {
         ]);
         setCurrentChapter(nextChapter.chapterNumber);
       });
+    } catch (error: unknown) {
+      console.error(error);
+    } finally {
       if (chaptersRef.current) {
         chaptersRef.current.lastElementChild?.scrollIntoView({
           behavior: "smooth",
         });
       }
-    } catch (error: unknown) {
-      console.error(error);
     }
   }
 
@@ -136,6 +134,7 @@ export default function Gameplay({ adventureId }: GameplayProps) {
           <button
             onClick={startAdventure}
             className="border rounded-lg p-2 cursor-pointer"
+            disabled={adventureMutation.isPending}
           >
             {t("adventure.btn-start")}
           </button>
@@ -159,6 +158,7 @@ export default function Gameplay({ adventureId }: GameplayProps) {
             </div>
           </div>
         ))}
+        {adventureMutation.isError && <div>{t("adventure.error-chapter")}</div>}
       </div>
       {adventureMutation.isPending && <div>{t("adventure.narrating")}</div>}
       {hasEnded && (
