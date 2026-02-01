@@ -62,8 +62,8 @@ export default function NewSetup() {
       >
         {t("new.link-home")}
       </Link>
-      {adventureMutation.isError && (
-        <div>
+      {(adventureTypesQuery.isError || adventureMutation.isError) && (
+        <div className="p-4">
           <span>
             {isServiceUnavailableError(adventureMutation.error)
               ? t(`new.error-${adventureMutation.error.type}`)
@@ -71,11 +71,7 @@ export default function NewSetup() {
           </span>
         </div>
       )}
-      {adventureTypesQuery.isError ? (
-        <div>
-          <span>{t("new.error-generic")}</span>
-        </div>
-      ) : (
+      {adventureTypesQuery.isSuccess && (
         <form
           onSubmit={(e) => newAdventure(e)}
           className="w-full flex-1 flex flex-col gap-8 p-4"
