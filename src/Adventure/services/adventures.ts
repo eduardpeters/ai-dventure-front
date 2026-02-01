@@ -1,3 +1,4 @@
+import { mapHttpResponseToError } from "@/errors/mapResponseToError";
 import ky, { isHTTPError, type HTTPError } from "ky";
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/adventures`;
@@ -20,10 +21,18 @@ export class AdventureService {
   static counter: number = 1;
 
   static async create(adventureTypeId: string) {
-    const json = await ky
-      .post<NewAdventureResponse>(BASE_URL, { json: { adventureTypeId } })
-      .json();
-    return json;
+    try {
+      const json = await ky
+        .post<NewAdventureResponse>(BASE_URL, { json: { adventureTypeId } })
+        .json();
+      return json;
+    } catch (error: unknown) {
+      if (isHTTPError(error)) {
+        const body = await error.response.text();
+        throw mapHttpResponseToError(error.response.status, body, error);
+      }
+      throw error;
+    }
   }
 
   static async advance(adventureId: string, chapterChoiceId?: string) {

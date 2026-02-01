@@ -7,6 +7,7 @@ import {
   advanceAdventureMutationOptions,
   createAdventureMutationOptions,
 } from "../queryOptions/adventures";
+import { isServiceUnavailableError } from "@/errors/errors";
 
 export default function NewSetup() {
   const { t } = useTranslation();
@@ -14,10 +15,10 @@ export default function NewSetup() {
   const adventureTypesQuery = useSuspenseQuery(adventureTypesQueryOptions);
   const adventureMutation = useMutation(createAdventureMutationOptions);
   const initializeAdventureMutation = useMutation(
-    advanceAdventureMutationOptions
+    advanceAdventureMutationOptions,
   );
   const [selectedType, setSelectedType] = useState<string | undefined>(
-    adventureTypesQuery.data[0]?.id
+    adventureTypesQuery.data[0]?.id,
   );
 
   const adventureTypes = adventureTypesQuery.data;
@@ -30,30 +31,26 @@ export default function NewSetup() {
     e.preventDefault();
     if (!selectedType) return;
 
-    try {
-      const newAdventure = await adventureMutation.mutateAsync(selectedType);
+    const newAdventure = await adventureMutation.mutateAsync(selectedType);
 
-      try {
-        const firstChapter = await initializeAdventureMutation.mutateAsync({
-          adventureId: newAdventure.adventure,
-        });
-        if (firstChapter) {
-          // Allows for retrieval upon arriving on the Gameplay page
-          sessionStorage.setItem(
-            newAdventure.adventure,
-            JSON.stringify(firstChapter)
-          );
-        }
-      } catch (e: unknown) {
-        console.error(e);
-      } finally {
-        navigate({
-          to: "/adventure/$adventureId",
-          params: { adventureId: newAdventure.adventure },
-        });
+    try {
+      const firstChapter = await initializeAdventureMutation.mutateAsync({
+        adventureId: newAdventure.adventure,
+      });
+      if (firstChapter) {
+        // Allows for retrieval upon arriving on the Gameplay page
+        sessionStorage.setItem(
+          newAdventure.adventure,
+          JSON.stringify(firstChapter),
+        );
       }
     } catch (e: unknown) {
       console.error(e);
+    } finally {
+      navigate({
+        to: "/adventure/$adventureId",
+        params: { adventureId: newAdventure.adventure },
+      });
     }
   }
 
@@ -65,9 +62,18 @@ export default function NewSetup() {
       >
         {t("new.link-home")}
       </Link>
+      {adventureMutation.isError && (
+        <div>
+          <span>
+            {isServiceUnavailableError(adventureMutation.error)
+              ? t(`new.error-${adventureMutation.error.type}`)
+              : t("new.error-generic")}
+          </span>
+        </div>
+      )}
       {adventureTypesQuery.isError ? (
         <div>
-          <span>This is unfortunate, please come back later!</span>
+          <span>{t("new.error-generic")}</span>
         </div>
       ) : (
         <form

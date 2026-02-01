@@ -16,7 +16,9 @@
     "summary-fantasy": "You will visit a land of fantasy",
     "summary-scifi": "You will experience a science fiction adventure",
     "summary-contemporarythriller": "You will live the tension of a contemporary thriller",
-    "btn-submit": "Begin adventure!"
+    "btn-submit": "Begin adventure!",
+    "error-generic": "This is unfortunate, please come back later!",
+    "error-service-unavailable": "New adventure limit has been reached, please come back later!"
   },
   "adventure": {
     "title": "Venture forth...",
