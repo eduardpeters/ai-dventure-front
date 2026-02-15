@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { advanceAdventureMutationOptions } from "../queryOptions/adventures";
-import type { ChapterResponse } from "../services/adventures";
+import {
+  adventureQueryOptions,
+  advanceAdventureMutationOptions,
+} from "../queryOptions/adventures";
 
 interface GameplayProps {
   adventureId: string;
@@ -22,6 +24,7 @@ interface Chapter {
 
 export default function Gameplay({ adventureId }: GameplayProps) {
   const { t } = useTranslation();
+  const adventure = useSuspenseQuery(adventureQueryOptions(adventureId));
   const adventureMutation = useMutation(advanceAdventureMutationOptions);
   const [currentChapter, setCurrentChapter] = useState<number>(0);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -32,33 +35,27 @@ export default function Gameplay({ adventureId }: GameplayProps) {
     chapters.length > 0 && chapters[chapters.length - 1].choices.length === 0;
 
   useEffect(() => {
-    if (chapters.length === 0) {
-      const stored = sessionStorage.getItem(adventureId);
-      if (!stored) {
-        console.log("Allow for manual start!");
+    if (!adventure.isError && adventure.data) {
+      // Split latest adventure state into our local state and manage it from there
+      if (adventure.data.chapters.length === 0) {
+        console.log("Allow for manual start here");
         return;
       }
-      try {
-        const parsedChapter = JSON.parse(stored) as ChapterResponse;
-        setCurrentChapter(parsedChapter.chapterNumber);
-        setChapters([
-          {
-            ...parsedChapter,
-            choices: parsedChapter.choices.map((c) => ({
-              ...c,
-              chosen: false,
-            })),
-          },
-        ]);
-      } catch (e: unknown) {
-        console.error(e);
-      }
+      let latestChapter = 0;
+      const previousChapters: Chapter[] = adventure.data.chapters.map(
+        (chapter) => {
+          if (chapter.number > latestChapter) latestChapter++;
+          return {
+            chapterNumber: chapter.number,
+            narrative: chapter.narrative,
+            choices: [...chapter.choices],
+          };
+        },
+      );
+      setCurrentChapter(latestChapter);
+      setChapters(previousChapters);
     }
-
-    return () => {
-      sessionStorage.removeItem(adventureId);
-    };
-  }, []);
+  }, [adventure.isError, adventure.data]);
 
   async function startAdventure() {
     if (chapters.length !== 0) return;
