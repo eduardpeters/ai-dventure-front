@@ -34,16 +34,10 @@ export default function NewSetup() {
     const newAdventure = await adventureMutation.mutateAsync(selectedType);
 
     try {
-      const firstChapter = await initializeAdventureMutation.mutateAsync({
+      // Allows for retrieval upon arriving on the Gameplay page
+      await initializeAdventureMutation.mutateAsync({
         adventureId: newAdventure.adventure,
       });
-      if (firstChapter) {
-        // Allows for retrieval upon arriving on the Gameplay page
-        sessionStorage.setItem(
-          newAdventure.adventure,
-          JSON.stringify(firstChapter),
-        );
-      }
     } catch (e: unknown) {
       console.error(e);
     } finally {

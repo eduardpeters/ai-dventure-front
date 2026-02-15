@@ -5,7 +5,10 @@ export const adventureQueryOptions = (adventureId: string) =>
   queryOptions({
     queryKey: ["adventures", adventureId],
     queryFn: () => AdventureService.get(adventureId),
-    staleTime: "static",
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    gcTime: 5 * 60 * 1000,
   });
 
 export const createAdventureMutationOptions = mutationOptions({
