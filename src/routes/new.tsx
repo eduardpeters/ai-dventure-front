@@ -4,10 +4,13 @@ import NewSetup from "@/Adventure/components/NewSetup";
 import { adventureTypesQueryOptions } from "@/Adventure/queryOptions/adventureTypes";
 
 export const Route = createFileRoute("/new")({
+  component: RouteComponent,
   loader: ({ context: { queryClient } }) => {
     queryClient.prefetchQuery(adventureTypesQueryOptions);
   },
-  component: RouteComponent,
+  errorComponent: ({ error }) => (
+    <div>Error loading adventure setup: {error.message}</div>
+  ),
 });
 
 function RouteComponent() {
