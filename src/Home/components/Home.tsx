@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+import StyledLink from "@/components/StyledLink";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -11,12 +11,7 @@ export default function Home() {
         <h2 className="text-3xl">{t("home.subtitle")}</h2>
         <p className="w-prose">{t("home.description")}</p>
       </section>
-      <Link
-        to="/new"
-        className="rounded-lg p-2 cursor-pointer text-neutral-100 bg-sky-600 hover:text-neutral-50 hover:bg-sky-700 dark:bg-sky-800 dark:hover:bg-sky-700"
-      >
-        {t("home.link-new")}
-      </Link>
+      <StyledLink linkOptions={{ to: "/new" }} text={t("home.link-new")} />
     </main>
   );
 }
