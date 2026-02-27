@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { adventureTypesQueryOptions } from "../queryOptions/adventureTypes";
@@ -8,6 +8,8 @@ import {
   createAdventureMutationOptions,
 } from "../queryOptions/adventures";
 import { isServiceUnavailableError } from "@/errors/errors";
+import StyledButton from "@/components/StyledButton";
+import StyledLink from "@/components/StyledLink";
 
 export default function NewSetup() {
   const { t } = useTranslation();
@@ -49,16 +51,14 @@ export default function NewSetup() {
   }
 
   return (
-    <main className="h-full w-full flex flex-col items-center p-2 gap-8">
-      <Link
-        to="/"
-        className="text-sm border rounded-lg p-1 cursor-pointer self-start"
-      >
-        {t("new.link-home")}
-      </Link>
-      {(adventureTypesQuery.isError || adventureMutation.isError) && (
+    <main className="h-full w-full flex flex-col items-center p-2 gap-8 text-black bg-neutral-200 dark:text-neutral-200 dark:bg-slate-800">
+      <div className="flex self-start p-4">
+        <StyledLink text={t("new.link-home")} linkOptions={{ to: "/" }} />
+      </div>
+
+      {(!adventureTypesQuery.isError || adventureMutation.isError) && (
         <div className="p-4">
-          <span>
+          <span className="text-red-600 dark:text-red-400">
             {isServiceUnavailableError(adventureMutation.error)
               ? t(`new.error-${adventureMutation.error.type}`)
               : t("new.error-generic")}
@@ -68,7 +68,7 @@ export default function NewSetup() {
       {adventureTypesQuery.isSuccess && (
         <form
           onSubmit={(e) => newAdventure(e)}
-          className="w-full flex-1 flex flex-col gap-8 p-4"
+          className="w-full md:max-w-96 flex-1 flex flex-col gap-8 p-4"
         >
           <h1 className="text-3xl">{t("new.title")}</h1>
           <div className="flex flex-col gap-2">
@@ -79,7 +79,7 @@ export default function NewSetup() {
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
               required
-              className="border rounded-lg p-2"
+              className="border rounded-lg p-2 dark:bg-slate-800"
             >
               {adventureTypes.map((type) => (
                 <option key={type.id} value={type.id}>
@@ -92,17 +92,15 @@ export default function NewSetup() {
             <h3 className="text-xl">{t("new.title-summary")}</h3>
             <p>{t(`new.summary-${description}`)}</p>
           </div>
-          <button
+          <StyledButton
             type="submit"
             disabled={
               !selectedType ||
               adventureMutation.isPending ||
               initializeAdventureMutation.isPending
             }
-            className="border rounded-lg p-2 cursor-pointer"
-          >
-            {t("new.btn-submit")}
-          </button>
+            text={t("new.btn-submit")}
+          />
         </form>
       )}
     </main>
