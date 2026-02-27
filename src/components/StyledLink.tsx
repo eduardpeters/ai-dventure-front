@@ -17,7 +17,7 @@ export default function StyledLink<TRouter extends RegisteredRouter, TOptions>(
 ) {
   return (
     <Link
-      className="rounded-lg p-2 cursor-pointer text-neutral-100 bg-sky-600 hover:text-neutral-50 hover:bg-sky-700 dark:bg-sky-800 dark:hover:bg-sky-700"
+      className="shadow-sm border rounded-lg p-2 cursor-pointer text-black bg-neutral-200 hover:outline dark:text-neutral-100 dark:bg-slate-800"
       {...props.linkOptions}
     >
       {props.text}
