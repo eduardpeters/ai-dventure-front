@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import {
   adventureQueryOptions,
   advanceAdventureMutationOptions,
 } from "../queryOptions/adventures";
+import StyledButton from "@/components/StyledButton";
+import StyledLink from "@/components/StyledLink";
 
 interface GameplayProps {
   adventureId: string;
@@ -123,24 +124,25 @@ export default function Gameplay({ adventureId }: GameplayProps) {
   }
 
   return (
-    <main className="h-full w-full flex flex-col items-center p-2 gap-8">
-      <h1>{t("adventure.title")}</h1>
+    <main className="min-h-screen flex flex-col items-center p-2 gap-4 text-black bg-neutral-200 dark:text-neutral-200 dark:bg-slate-800">
+      <h1 className="text-lg tracking-wide">{t("adventure.title")}</h1>
       {notStarted && (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center gap-4">
           <p>{t("adventure.start")}</p>
-          <button
+          <StyledButton
+            text={t("adventure.btn-start")}
             onClick={startAdventure}
-            className="border rounded-lg p-2 cursor-pointer"
             disabled={adventureMutation.isPending}
-          >
-            {t("adventure.btn-start")}
-          </button>
+          />
         </div>
       )}
-      <div ref={chaptersRef}>
+      <div ref={chaptersRef} className="max-w-xl flex flex-col gap-4">
         {chapters.map((chapter) => (
-          <div key={chapter.chapterNumber}>
-            <p>{chapter.narrative}</p>
+          <div
+            key={chapter.chapterNumber}
+            className="flex flex-col gap-1 px-2 sm:px-0"
+          >
+            <p className="text-justify">{chapter.narrative}</p>
             <div>
               {chapter.choices.map((choice) => (
                 <button
@@ -159,14 +161,14 @@ export default function Gameplay({ adventureId }: GameplayProps) {
       </div>
       {adventureMutation.isPending && <div>{t("adventure.narrating")}</div>}
       {hasEnded && (
-        <div className="flex flex-col gap-2">
-          <span>{t("adventure.concluded")}</span>
-          <Link
-            to="/"
-            className="text-sm border rounded-lg p-1 cursor-pointer self-start"
-          >
-            {t("adventure.link-home")}
-          </Link>
+        <div className="flex flex-col gap-2 pb-4">
+          <span className="dark:text-neutral-100 text-lg">
+            {t("adventure.concluded")}
+          </span>
+          <StyledLink
+            text={t("adventure.link-home")}
+            linkOptions={{ to: "/" }}
+          />
         </div>
       )}
     </main>
