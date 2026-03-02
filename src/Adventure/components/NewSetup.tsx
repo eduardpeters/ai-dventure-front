@@ -56,7 +56,7 @@ export default function NewSetup() {
         <StyledLink text={t("new.link-home")} linkOptions={{ to: "/" }} />
       </div>
 
-      {(!adventureTypesQuery.isError || adventureMutation.isError) && (
+      {(adventureTypesQuery.isError || adventureMutation.isError) && (
         <div className="p-4">
           <span className="text-red-600 dark:text-red-400">
             {isServiceUnavailableError(adventureMutation.error)
