@@ -6,6 +6,7 @@ import {
   adventureQueryOptions,
   advanceAdventureMutationOptions,
 } from "../queryOptions/adventures";
+import Choice from "./Choice";
 import StyledButton from "@/components/StyledButton";
 import StyledLink from "@/components/StyledLink";
 
@@ -140,26 +141,25 @@ export default function Gameplay({ adventureId }: GameplayProps) {
         {chapters.map((chapter) => (
           <div
             key={chapter.chapterNumber}
-            className="flex flex-col gap-1 px-2 sm:px-0"
+            className="flex flex-col gap-2 px-2 sm:px-0"
           >
             <p className="text-justify">{chapter.narrative}</p>
-            <div>
+            <div className="flex flex-col gap-1">
               {chapter.choices.map((choice) => (
-                <button
+                <Choice
                   key={choice.id}
-                  className={`border rounded-md p-2 bg-gray-100 active:text-gray-800 active:bg-gray-300 ${choice.chosen ? "disabled:text-gray-800 disabled:bg-gray-200" : "disabled:text-gray-400 disabled:bg-gray-100"}`}
-                  onClick={() => advanceAdventure(choice.id)}
-                  disabled={currentChapter > chapter.chapterNumber}
-                >
-                  {choice.action}
-                </button>
+                  content={choice.action}
+                  chosen={choice.chosen}
+                  onChosen={() => advanceAdventure(choice.id)}
+                  isCurrent={currentChapter === chapter.chapterNumber}
+                />
               ))}
             </div>
           </div>
         ))}
         {adventureMutation.isError && <div>{t("adventure.error-chapter")}</div>}
+        {adventureMutation.isPending && <div>{t("adventure.narrating")}</div>}
       </div>
-      {adventureMutation.isPending && <div>{t("adventure.narrating")}</div>}
       {hasEnded && (
         <div className="flex flex-col gap-2 pb-4">
           <span className="dark:text-neutral-100 text-lg">
