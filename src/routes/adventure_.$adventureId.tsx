@@ -17,7 +17,7 @@ function RouteComponent() {
 
   return (
     <Suspense fallback={<div>Loading adventure...</div>}>
-      <Gameplay adventureId={adventureId} />;
+      <Gameplay adventureId={adventureId} />
     </Suspense>
   );
 }
