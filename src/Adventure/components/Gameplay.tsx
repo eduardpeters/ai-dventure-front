@@ -157,7 +157,11 @@ export default function Gameplay({ adventureId }: GameplayProps) {
             </div>
           </div>
         ))}
-        {adventureMutation.isError && <div>{t("adventure.error-chapter")}</div>}
+        {adventureMutation.isError && (
+          <div className="text-red-600 dark:text-red-400">
+            {t("adventure.error-chapter")}
+          </div>
+        )}
         {adventureMutation.isPending && <div>{t("adventure.narrating")}</div>}
       </div>
       {hasEnded && (
