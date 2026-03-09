@@ -24,7 +24,7 @@ interface Chapter {
   }[];
 }
 
-export default function Gameplay({ adventureId }: GameplayProps) {
+export default function Gameplay({ adventureId }: Readonly<GameplayProps>) {
   const { t } = useTranslation();
   const adventure = useSuspenseQuery(adventureQueryOptions(adventureId));
   const adventureMutation = useMutation(advanceAdventureMutationOptions);

@@ -4,7 +4,10 @@ interface StyledButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
 }
 
-export default function StyledButton({ text, ...props }: StyledButtonProps) {
+export default function StyledButton({
+  text,
+  ...props
+}: Readonly<StyledButtonProps>) {
   return (
     <button
       className="shadow-sm border text-center rounded-lg p-2 cursor-pointer disabled:cursor-not-allowed text-black bg-neutral-200 hover:outline dark:text-neutral-100 dark:bg-slate-800"
