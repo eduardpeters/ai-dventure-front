@@ -117,25 +117,23 @@ export function isAppError(e: unknown): e is AppError {
 }
 
 export function isHTTPError(e: unknown): e is HTTPError {
-  return isAppError(e) && (e as AppError).type === ERRORS_GENERIC_HTTP_TYPE;
+  return isAppError(e) && e.type === ERRORS_GENERIC_HTTP_TYPE;
 }
 
 export function isNetworkError(e: unknown): e is NetworkError {
-  return isAppError(e) && (e as AppError).type === ERRORS_NETWORK_ERROR_TYPE;
+  return isAppError(e) && e.type === ERRORS_NETWORK_ERROR_TYPE;
 }
 
 export function isNotFoundError(e: unknown): e is NotFoundError {
-  return isAppError(e) && (e as AppError).type === ERRORS_NOT_FOUND_TYPE;
+  return isAppError(e) && e.type === ERRORS_NOT_FOUND_TYPE;
 }
 
 export function isInternalServerError(e: unknown): e is InternalServerError {
-  return (
-    isAppError(e) && (e as AppError).type === ERRORS_INTERNAL_SERVER_ERROR_TYPE
-  );
+  return isAppError(e) && e.type === ERRORS_INTERNAL_SERVER_ERROR_TYPE;
 }
 
 export function isServiceUnavailableError(
   e: unknown,
 ): e is ServiceUnavailableError {
-  return isAppError(e) && (e as AppError).type === ERRORS_SERVICE_UNAVAILABLE;
+  return isAppError(e) && e.type === ERRORS_SERVICE_UNAVAILABLE;
 }
