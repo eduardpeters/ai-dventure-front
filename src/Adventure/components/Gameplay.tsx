@@ -9,10 +9,7 @@ import {
 import Choice from "./Choice";
 import StyledButton from "@/components/StyledButton";
 import StyledLink from "@/components/StyledLink";
-
-interface GameplayProps {
-  adventureId: string;
-}
+import type { ChapterResponse } from "../services/adventures";
 
 interface Chapter {
   chapterNumber: number;
@@ -22,6 +19,24 @@ interface Chapter {
     action: string;
     chosen: boolean;
   }[];
+}
+
+function chapterResponseToChapter(chapterResponse: ChapterResponse): Chapter {
+  return {
+    ...chapterResponse,
+    choices: chapterResponse.choices.map((c) => ({ ...c, chosen: false })),
+  };
+}
+
+function flagChosen(
+  chapterChoiceId: string,
+  choices: Chapter["choices"],
+): Chapter["choices"] {
+  return choices.map((c) => ({ ...c, chosen: c.id === chapterChoiceId }));
+}
+
+interface GameplayProps {
+  adventureId: string;
 }
 
 export default function Gameplay({ adventureId }: Readonly<GameplayProps>) {
@@ -71,15 +86,7 @@ export default function Gameplay({ adventureId }: Readonly<GameplayProps>) {
         return;
       }
       setCurrentChapter(firstChapter.chapterNumber);
-      setChapters([
-        {
-          ...firstChapter,
-          choices: firstChapter.choices.map((c) => ({
-            ...c,
-            chosen: false,
-          })),
-        },
-      ]);
+      setChapters([chapterResponseToChapter(firstChapter)]);
     } catch (error: unknown) {
       console.error(error);
     }
@@ -99,17 +106,11 @@ export default function Gameplay({ adventureId }: Readonly<GameplayProps>) {
             chapter.chapterNumber === currentChapter
               ? {
                   ...chapter,
-                  choices: chapter.choices.map((c) => ({
-                    ...c,
-                    chosen: c.id === chapterChoiceId,
-                  })),
+                  choices: flagChosen(chapterChoiceId, chapter.choices),
                 }
               : chapter,
           ),
-          {
-            ...nextChapter,
-            choices: nextChapter.choices.map((c) => ({ ...c, chosen: false })),
-          },
+          chapterResponseToChapter(nextChapter),
         ]);
         setCurrentChapter(nextChapter.chapterNumber);
       });
