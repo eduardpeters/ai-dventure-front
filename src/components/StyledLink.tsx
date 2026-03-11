@@ -13,7 +13,7 @@ interface StyledLinkProps<
 }
 
 export default function StyledLink<TRouter extends RegisteredRouter, TOptions>(
-  props: StyledLinkProps<TRouter, TOptions>,
+  props: Readonly<StyledLinkProps<TRouter, TOptions>>,
 ) {
   return (
     <Link

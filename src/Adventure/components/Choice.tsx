@@ -10,7 +10,7 @@ export default function Choice({
   chosen,
   isCurrent,
   onChosen,
-}: ChoiceProps) {
+}: Readonly<ChoiceProps>) {
   if (isCurrent) {
     return (
       <button
